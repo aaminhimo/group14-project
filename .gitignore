@@ -218,3 +218,18 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# ---- Group 14 project rules ----
+# Full dataset, local database and trained models are never committed (instructor rule, NFR-07)
+data/raw/
+data/*.db
+models/*.joblib
+models/metrics.json
+
+# Node tooling (diagram rendering only)
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
