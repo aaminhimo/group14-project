@@ -12,8 +12,8 @@
 | Member | Student ID | Main responsibility |
 |---|---|---|
 | Mohammad Wadi | 20230719 | //Data layer: ingestion, database, data API, ERD/DFD, data tests |
-| Kareem Qasmiya | 20230035 | //ML pipeline and prediction service, `ml_pipeline.md`, model tests |
-| Mohammad Harbieh | 20230440 | //Frontend dashboard, use case descriptions, UI/system tests |
+| Kareem Qasmiya | 20230035 | //Frontend dashboard, use case descriptions, UI/system tests |
+| Mohammad Harbieh | 20230440 | //ML pipeline and prediction service, `ml_pipeline.md`, model tests |
 | Amin Himo | 202301238 | //Architecture/UML, documentation, traceability, repo admin, report |
 
 ## 2. Project overview
