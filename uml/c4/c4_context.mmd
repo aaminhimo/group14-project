@@ -1,0 +1,25 @@
+---
+title: "C4 Level 1 - System Context: AI Energy Consumption Forecasting Dashboard (Group 14)"
+---
+%% C4 Level 1 - System Context (C4 notation drawn with a Mermaid flowchart for a readable layout)
+%% Edit this file in place; re-render with `npm run diagrams`. Git history keeps older versions.
+flowchart TB
+  analyst["<b>Energy Analyst</b><br/><i>[Person]</i><br/>Explores historical energy and<br/>environmental data; compares<br/>predicted vs actual consumption"]
+  manager["<b>Building Manager</b><br/><i>[Person]</i><br/>Runs what-if predictions, watches<br/>simulated live readings,<br/>receives alerts and reports"]
+  ds["<b>Data Scientist (team)</b><br/><i>[Person]</i><br/>Loads the dataset and<br/>trains / evaluates the model"]
+
+  efd["<b>Energy Forecasting Dashboard</b><br/><i>[Software System]</i><br/>Stores building and environmental measurements,<br/>predicts appliance energy use (Wh), and shows<br/>history, actual-vs-predicted comparison, what-if<br/>results, simulated live replay, alerts and reports"]
+
+  uci["<b>UCI ML Repository</b><br/><i>[External Software System]</i><br/>Hosts the Appliances Energy<br/>Prediction dataset (CSV, CC BY 4.0)"]
+
+  analyst -- "Views history, comparison, reports<br/><i>[Web browser]</i>" --> efd
+  manager -- "What-if input, replay, alerts<br/><i>[Web browser]</i>" --> efd
+  ds -- "Runs ingestion and training<br/><i>[Command line]</i>" --> efd
+  efd -- "Downloads dataset (one-off)<br/><i>[HTTPS]</i>" --> uci
+
+  classDef person fill:#08427b,stroke:#052e56,color:#ffffff
+  classDef system fill:#1168bd,stroke:#0b4884,color:#ffffff
+  classDef external fill:#999999,stroke:#6b6b6b,color:#ffffff
+  class analyst,manager,ds person
+  class efd system
+  class uci external

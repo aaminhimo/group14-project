@@ -1,0 +1,23 @@
+%% Container-level sequence: SD-04 Compare actual vs predicted (UC-04; FR-09, FR-10)
+sequenceDiagram
+  autonumber
+  actor AN as Energy Analyst
+  participant WEB as Web Dashboard<br/>(src/frontend)
+  participant API as Backend API<br/>(api/compare.py)
+  participant DB as Energy Database<br/>(SQLite)
+  participant MS as Model Artifact Store<br/>(models/)
+
+  AN->>WEB: open Comparison page, pick period
+  WEB->>API: GET /api/compare?start=...&end=...
+  API->>DB: SELECT measurements in period
+  DB-->>API: rows (actual Appliances)
+  API->>DB: SELECT stored predictions for those timestamps
+  DB-->>API: predictions (may be partial)
+  opt missing predictions
+    API->>MS: use cached model
+    API->>API: batch predict missing rows
+    API->>DB: INSERT predictions (source=compare)
+  end
+  API->>API: compute MAE, RMSE, R2 for the period
+  API-->>WEB: 200 {series[actual, predicted], metrics}
+  WEB-->>AN: overlay chart + error summary table

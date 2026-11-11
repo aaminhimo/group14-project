@@ -1,0 +1,36 @@
+%% Container-level sequence: SD-05 Simulated live replay with alerts (UC-06, UC-07; FR-12, FR-13, FR-14, FR-15)
+sequenceDiagram
+  autonumber
+  actor BM as Building Manager
+  participant WEB as Web Dashboard<br/>(src/frontend)
+  participant API as Backend API<br/>(api/replay.py, services/alert_service.py)
+  participant DB as Energy Database<br/>(SQLite)
+  participant MS as Model Artifact Store<br/>(models/)
+
+  BM->>WEB: start replay (start time, speed x60, threshold 400 Wh)
+  WEB->>API: POST /api/replay {start_ts, speed, threshold_wh}
+  API->>DB: INSERT replay_sessions (status=running, cursor=start_ts)
+  DB-->>API: session id
+  API-->>WEB: 201 {session_id}
+
+  loop every (600 s / speed) until finished or paused
+    WEB->>API: GET /api/replay/{id}/next
+    API->>DB: SELECT next measurement after cursor
+    DB-->>API: reading
+    API->>MS: cached model
+    API->>API: predict next-step energy
+    API->>DB: INSERT predictions (source=replay), UPDATE cursor
+    alt predicted_wh or actual_wh > threshold
+      API->>DB: INSERT alerts (value, threshold, timestamp)
+      API-->>WEB: 200 {reading, predicted_wh, alert}
+      WEB-->>BM: update live chart + show alert banner
+    else normal
+      API-->>WEB: 200 {reading, predicted_wh}
+      WEB-->>BM: update live chart
+    end
+  end
+
+  BM->>WEB: pause / stop
+  WEB->>API: PATCH /api/replay/{id} {status}
+  API->>DB: UPDATE replay_sessions status
+  API-->>WEB: 200
