@@ -1,0 +1,32 @@
+%% Container-level sequence: SD-01 Ingest dataset and train model (UC-01, UC-02; FR-01, FR-05, FR-06)
+sequenceDiagram
+  autonumber
+  actor DS as Data Scientist
+  participant ING as Data Ingestion Job<br/>(src/backend/ingest)
+  participant UCI as UCI ML Repository
+  participant DB as Energy Database<br/>(SQLite)
+  participant TRN as ML Training Pipeline<br/>(src/ml)
+  participant MS as Model Artifact Store<br/>(models/)
+
+  DS->>ING: python -m src.backend.ingest.loader
+  ING->>UCI: GET appliances+energy+prediction.zip
+  UCI-->>ING: energydata_complete.csv (19,735 rows)
+  ING->>ING: validate schema (29 columns), parse timestamps,<br/>reject duplicates, drop rv1/rv2
+  alt schema invalid
+    ING-->>DS: error report, nothing written
+  else valid
+    ING->>DB: bulk INSERT measurements (idempotent on timestamp)
+    DB-->>ING: rows inserted
+    ING-->>DS: summary (rows, date range)
+  end
+
+  DS->>TRN: python -m src.ml.train
+  TRN->>DB: SELECT measurements ORDER BY timestamp
+  DB-->>TRN: rows
+  TRN->>TRN: build features (hour, weekday, weekend, lags)
+  TRN->>TRN: chronological split 70 / 15 / 15
+  TRN->>TRN: fit baselines + candidate models,<br/>score MAE, RMSE, R2 on validation
+  TRN->>TRN: evaluate chosen model once on test set
+  TRN->>MS: save energy_model.joblib + metrics.json
+  TRN->>DB: INSERT model_runs (version, metrics, artifact path)
+  TRN-->>DS: metrics report

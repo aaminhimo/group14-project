@@ -1,0 +1,21 @@
+%% Container-level sequence: SD-02 View historical measurements (UC-03; FR-02, FR-03, FR-04)
+sequenceDiagram
+  autonumber
+  actor AN as Energy Analyst
+  participant WEB as Web Dashboard<br/>(src/frontend)
+  participant API as Backend API<br/>(api/measurements.py)
+  participant DB as Energy Database<br/>(SQLite)
+
+  AN->>WEB: open History page, pick date range + variables
+  WEB->>API: GET /api/measurements?start=...&end=...&fields=Appliances,T1,RH_1
+  API->>API: validate range (start < end, within dataset)
+  alt invalid range
+    API-->>WEB: 422 {detail}
+    WEB-->>AN: show validation message
+  else valid
+    API->>DB: SELECT ... WHERE timestamp BETWEEN start AND end
+    DB-->>API: rows
+    API->>API: downsample if > 5,000 points, compute summary stats
+    API-->>WEB: 200 {points[], summary{min,mean,max}}
+    WEB-->>AN: render energy, temperature and humidity charts
+  end
