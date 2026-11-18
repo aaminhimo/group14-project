@@ -8,7 +8,7 @@
 
 | Version | Type | Capability / Scope | Deliverable / Evidence | Requirements / Design Links |
 |---|---|---|---|---|
-| v0.1.0-design | Design | Architecture baseline + data ingestion & historical dashboard | requirements, C4 L1/L2, SD-01…SD-05, ERD, dataset analysis, code skeleton | FR-01–FR-04, [architecture.md](architecture.md), `uml/c4/*`, `uml/sequence/*`, `uml/data/erd.mmd` |
+| v0.1.0-design | Design | Architecture baseline + data ingestion & historical dashboard | requirements, C4 L1/L2, SD-01…SD-05, ERD, dataset analysis | FR-01–FR-04, [architecture.md](architecture.md), `uml/c4/*`, `uml/sequence/*`, `uml/data/erd.mmd` |
 | v0.1.0 | Working | Load CSV into SQLite; query by date range; history charts | ingest job, `/api/measurements`, history page, tests | `src/backend/ingest/`, `src/backend/app/api/measurements.py`, `tests/unit`, `tests/integration` |
 | v0.2.0-design | Design | ML pipeline | `ml_pipeline.md` final: features, split, metrics, artifact format | FR-05, FR-06, [ml_pipeline.md](ml_pipeline.md) |
 | v0.2.0 | Working | Features, training, evaluation, saved model | training script, baseline vs models report | `src/ml/`, `tests/ml` |
