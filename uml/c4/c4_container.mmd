@@ -1,0 +1,44 @@
+---
+title: "C4 Level 2 - Containers: Energy Forecasting Dashboard"
+---
+%% C4 Level 2 - Container Diagram (C4 notation drawn with a Mermaid flowchart for a readable layout)
+%% Edit this file in place; re-render with `npm run diagrams`. Git history keeps older versions.
+flowchart TB
+  analyst["<b>Energy Analyst</b><br/><i>[Person]</i>"]
+  manager["<b>Building Manager</b><br/><i>[Person]</i>"]
+  ds["<b>Data Scientist (team)</b><br/><i>[Person]</i>"]
+
+  subgraph sys["Energy Forecasting Dashboard [Software System]"]
+    direction TB
+    web["<b>Web Dashboard</b><br/><i>[Container: HTML, JavaScript, Plotly.js]</i><br/>History, actual vs predicted, what-if form,<br/>replay view, alerts, reports<br/><code>src/frontend/</code>"]
+    api["<b>Backend API</b><br/><i>[Container: Python 3.11, FastAPI, SQLAlchemy]</i><br/>REST: /measurements /predict /predictions<br/>/compare /replay /alerts /reports<br/>Loads the model once at startup<br/><code>src/backend/app/</code>"]
+    ingest["<b>Data Ingestion Job</b><br/><i>[Container: Python CLI, pandas]</i><br/>Downloads + validates CSV,<br/>loads measurements<br/><code>src/backend/ingest/</code>"]
+    train["<b>ML Training Pipeline</b><br/><i>[Container: Python CLI, scikit-learn]</i><br/>Features, chronological split,<br/>baseline vs models, metrics<br/><code>src/ml/</code>"]
+    db[("<b>Energy Database</b><br/><i>[Container: SQLite]</i><br/>measurements, predictions,<br/>model_runs, replay_sessions, alerts")]
+    store[("<b>Model Artifact Store</b><br/><i>[Container: joblib + JSON files]</i><br/>models/energy_model.joblib<br/>models/metrics.json")]
+  end
+
+  uci["<b>UCI ML Repository</b><br/><i>[External Software System]</i><br/>energydata_complete.csv"]
+
+  analyst -- "Uses<br/><i>[Browser]</i>" --> web
+  manager -- "Uses<br/><i>[Browser]</i>" --> web
+  ds -- "Runs<br/><i>[CLI]</i>" --> ingest
+  ds -- "Runs<br/><i>[CLI]</i>" --> train
+
+  web -- "Calls<br/><i>[JSON / HTTP]</i>" --> api
+  api -- "Reads / writes<br/><i>[SQLAlchemy]</i>" --> db
+  api -- "Loads model<br/><i>[joblib]</i>" --> store
+  ingest -- "Downloads<br/><i>[HTTPS]</i>" --> uci
+  ingest -- "Bulk inserts<br/><i>[SQLAlchemy]</i>" --> db
+  train -- "Reads measurements,<br/>writes model_runs" --> db
+  train -- "Saves model + metrics<br/><i>[joblib]</i>" --> store
+
+  classDef person fill:#08427b,stroke:#052e56,color:#ffffff
+  classDef container fill:#438dd5,stroke:#2e6295,color:#ffffff
+  classDef database fill:#438dd5,stroke:#2e6295,color:#ffffff
+  classDef external fill:#999999,stroke:#6b6b6b,color:#ffffff
+  class analyst,manager,ds person
+  class web,api,ingest,train container
+  class db,store database
+  class uci external
+  style sys fill:#ffffff,stroke:#444444,stroke-dasharray:6 4,color:#222222
