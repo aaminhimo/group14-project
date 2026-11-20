@@ -64,7 +64,7 @@ Later diagrams (data flow, component, class, activity, state, deployment) are pl
 | `v0.9.0` | Alerts and reporting | planned |
 | `v1.0.0` | Final integrated release | planned |
 
-Each capability has a `-design` tag before its working tag. Full plan: [[docs/incremental_development_plan.md](docs/incremental_development_plan.md)](https://github.com/aaminhimo/group14-project/blob/main/docs/incremental_development_plan%20(2).md)
+Each capability has a `-design` tag before its working tag. Full plan: (https://github.com/aaminhimo/group14-project/blob/main/docs/incremental_development_plan%20(2).md)
 
 ## 6. Contributions
 
