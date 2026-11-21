@@ -1,0 +1,57 @@
+%% Class diagram: data ingestion process (UC-01, FR-01, sequence SD-01)
+%% Planned code: src/backend/ingest/download.py, src/backend/ingest/loader.py, src/backend/app/models.py
+%% Edit this file in place and re-render the SVG next to it.
+classDiagram
+  direction LR
+
+  class IngestionJob {
+    <<service>>
+    +string csvPath
+    +run() IngestionSummary
+    -insertNewRows(rows) int
+  }
+
+  class DatasetDownloader {
+    +string datasetUrl
+    +string rawDir
+    +download() string
+  }
+
+  class CsvValidator {
+    +List~string~ expectedColumns
+    +List~string~ droppedColumns
+    +validate(dataframe) ValidationResult
+  }
+
+  class ValidationResult {
+    +bool isValid
+    +int rowCount
+    +List~string~ errors
+  }
+
+  class IngestionSummary {
+    +int rowsRead
+    +int rowsInserted
+    +int duplicatesSkipped
+    +datetime firstTimestamp
+    +datetime lastTimestamp
+  }
+
+  class Measurement {
+    +int id
+    +datetime timestamp
+    +int appliances_wh
+    +int lights_wh
+    +float t1 ... t9
+    +float rh_1 ... rh_9
+    +float t_out
+    +float rh_out
+    +float press_mm_hg
+    +float windspeed
+  }
+
+  IngestionJob "1" --> "1" DatasetDownloader : uses
+  IngestionJob "1" --> "1" CsvValidator : uses
+  CsvValidator "1" --> "1" ValidationResult : returns
+  IngestionJob "1" --> "0..*" Measurement : creates and stores
+  IngestionJob "1" --> "1" IngestionSummary : produces
