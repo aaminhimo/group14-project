@@ -72,10 +72,10 @@ Commit counts from `git shortlog -sn --all --no-merges` (updated before each ora
 
 | Member | Commits | Main contributions |
 |---|---|---|
-| Mohammad Wadi | 26 | |
-| Kareem Qasmiya | 20 | |
-| Mohammad Harbieh | 2 | |
-| Amin Himo | 8 | |
+| Mohammad Wadi |26| |
+| Kareem Qasmiya |20| |
+| Mohammad Harbieh |2| |
+| Amin Himo |8| |
 
 ---
 
